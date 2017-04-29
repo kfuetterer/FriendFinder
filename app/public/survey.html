@@ -3,10 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Friend Finder</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="apiRoutes.js"></script>
+    <script src="htmlRoutes.js"></script>
 </head>
 <body>
     <div class="container">
+        <div id="resultsModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="closeButton" type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h2 class="modal-title"><strong>Best Match</strong></h2>
+                    </div>
+                    <div class="modal-body">
+                        <h2 id="matchName"></h2>
+                        <img id="matchImg" src="https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/6/005/064/1bd/3435aa3.jpg" alt="">
+                    </div>
+                    <div class="modal-footer">
+                        <button id="closeButton" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 		<h2>Survey Questions</h2>
 		<hr>
 		<h3><strong>About You</strong></h3>
@@ -126,34 +146,39 @@
       	</select>
 		<br>
 		<br>
-		<button type="submit" class="btn btn-primary btn-lg btn-block" id="submit"><i class="fa fa-check-circle" aria-hidden="true"></i>
- Submit</button>
-
+		<button type="submit" data-toggle="modal" data-target="#resultsModal" class="btn btn-primary btn-lg btn-block" id="submit"><i class="fa fa-check-circle" aria-hidden="true"></i>Submit</button>
 		<hr>
 	    <footer class="footer">
-	      <div class="container">
+	        <div class="container">
 		        <p><a href="/api/friends">API Friends List</a></p>
-	      </div>
+	        </div>
 	    </footer>
 	</div>
-
-	<div id="resultsModal" class="modal fade" role="dialog">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal">&times;</button>
-	        <h2 class="modal-title"><strong>Best Match</strong></h2>
-	      </div>
-	      <div class="modal-body">
-	        <h2 id="matchName"></h2>
-	        <img id="matchImg" src="https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/6/005/064/1bd/3435aa3.jpg" alt="">
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	      </div>
-	    </div>
-
-	  </div>
-	</div>
 </body>
+<script>
+    $("#submit").on("click", function(event) {
+        event.preventDefault();
+        var addFriend = {
+            name: $("#name").val().trim(),
+            photo: $("#photo").val().trim(),
+            q1: $("#q1").val().trim(),
+            q2: $("#q2").val().trim(),
+            q3: $("#q3").val().trim(),
+            q4: $("#q4").val().trim(),
+            q5: $("#q5").val().trim(),
+            q6: $("#q6").val().trim(),
+            q7: $("#q7").val().trim(),
+            q8: $("#q8").val().trim(),
+            q9: $("#q9").val().trim(),
+            q10: $("#q10").val().trim()
+        };
+        $.post("/api/new", addFriend)
+        .done(function() {
+            $.get("/api/results", function(data) {
+                $("#matchName").html(data.name);
+                $("#matchImg").html(data.photo);
+            });
+        });
+    });
+</script>
 </html>
